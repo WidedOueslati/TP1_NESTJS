@@ -1,4 +1,4 @@
-import { RequestService } from '@/request.service';
+import { RequestService } from '../../request.service';
 import {
   CanActivate,
   ExecutionContext,

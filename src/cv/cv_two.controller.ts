@@ -14,7 +14,7 @@ import { JWTAuthGuard } from '../auth/guards/authenticated.guard';
 import { RechercheCvDto } from './dto/recherche-cv.dto';
 import { AdminGuard } from '../auth/guards/admin.guards';
 import { Cv } from './entities/cv.entity';
-import { UserDecorator } from '@/auth/decorator';
+import { UserDecorator } from '../auth/decorator';
 
 
 @Controller({
@@ -65,6 +65,7 @@ export class CvTwoController {
       throw new UnauthorizedException('Unauthorized to create cv');
     }
     createCvDto.user= user; // Add userId to the DTO
+    console.log(createCvDto);
     return this.cvService.create(createCvDto);
   }
 
@@ -113,8 +114,17 @@ export class CvTwoController {
     )
     file: Express.Multer.File,
   ) {
-    console.log("test1 ");
+    console.log("test1 ", file);
+    const user = await this.userService.findOne(+(RequestService.getUserId()));
+    console.log(user);
+    const cvs= await this.cvService.findCvsByUserId(+(RequestService.getUserId()));
+    cvs.forEach(cv => {
+      //cv.path = file.filename; // Assign the file path to each CV
+      console.log(cv);
+      this.cvService.update(cv.id, {path: file.filename})
+    })
     return await this.fileUploadService.uploadFile(file);
+    
   }
 
   @Get('profile')

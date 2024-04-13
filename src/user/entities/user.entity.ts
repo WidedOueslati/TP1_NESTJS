@@ -2,10 +2,10 @@ import { Cv } from '../../cv/entities/cv.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-}
+  export enum UserRole {
+    ADMIN = 'admin',
+    USER = 'user',
+  }
 
 @Entity()
 export class User {

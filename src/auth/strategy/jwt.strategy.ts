@@ -1,24 +1,28 @@
-/*import { User } from '@/user/entities/user.entity';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-local';
-import { AuthService } from '../auth.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { User } from 'src/user/entities/user.entity';
+import { Repository } from 'typeorm';
+import { PayloadDto } from '../dto/payload.dto';
 
-/*
-@Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {
     super({
-      usernameField: 'email',
-      secretorke
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.SECRET,
     });
   }
-
-  async validate(email: string, password: string): Promise<User> {
-    const user = await this.authService.validateUser(email, password);
+  // La payloadInterface sert à typer votre code à vous de la créer selon votre payload
+  async validate(payload: PayloadDto) {
+    // validate jwt ce qu'on retourne ici ca va etre injecté dans la requete
+    const user = this.userRepository.findOne({ where : {username: payload.username }});
     if (!user) {
       throw new UnauthorizedException();
     }
     return user;
   }
-}*/
+}
