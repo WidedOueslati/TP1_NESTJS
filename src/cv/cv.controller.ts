@@ -7,8 +7,8 @@ import { RequestService } from '@/request.service';
 import { Cv } from './entities/cv.entity';
 import { Repository } from 'typeorm';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileUploadService } from '@/common/file-upload.service';
-import { multerConfig } from '@/common/multer.config';
+import { FileUploadService } from '../common/file-upload.service';
+import { multerConfig } from '../common/multer.config';
 
 @Controller({path: 'cv',
 version: '1',}

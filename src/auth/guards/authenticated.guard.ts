@@ -1,3 +1,4 @@
+import { RequestService } from '@/request.service';
 import {
   CanActivate,
   ExecutionContext,
@@ -9,7 +10,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class JWTAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService, private requestService: RequestService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -21,6 +22,7 @@ export class JWTAuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.SECRET,
       });
+      RequestService.setUserId(payload.userId); 
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

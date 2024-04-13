@@ -8,7 +8,7 @@ export class RequestService {
     this.userId = userId;
   }
 
-  static getUserId() {
+  static getUserId() : string {
     return this.userId;
   }
 }

@@ -10,9 +10,9 @@ import { UserModule } from '../user/user.module';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import { MulterModule } from '@nestjs/platform-express';
-import { FileUploadService } from '@/common/file-upload.service';
+import { FileUploadService } from '../common/file-upload.service';
 import { JwtService } from '@nestjs/jwt';
-import { JWTAuthGuard } from '@/auth/guards/authenticated.guard';
+import { JWTAuthGuard } from '../auth/guards/authenticated.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Cv,Skill,User]),

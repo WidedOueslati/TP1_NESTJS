@@ -6,7 +6,7 @@ import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { Skill } from '../skill/entities/skill.entity'; 
 import { RechercheCvDto } from './dto/recherche-cv.dto';
-import { UserService } from '@/user/user.service';
+import { UserService } from '../user/user.service';
 /*import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';*/
 
@@ -43,15 +43,17 @@ export class CvService {
 
   async findCvsByUserId(userId: number): Promise<Cv[]> {
     try {
-      // Use TypeORM repository to find all CVs associated with the given user ID
-      const findOptions: FindManyOptions<Cv> = {
-        where: {
-          user: await this.userService.findOne(userId) // Specify the userId property in your Cv entity
-        }
-      };
-      
-      // Use the find method with the constructed find options
-      const cvs = await this.cvRepository.find(findOptions);
+      // Rechercher l'utilisateur par son ID
+      const user = await this.userService.findOne(userId);
+
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      // Rechercher les CVs associés à cet utilisateur
+      const cvs = await this.cvRepository.find({
+        where: { user: user },
+      });
 
       if (!cvs || cvs.length === 0) {
         throw new NotFoundException(`CVs not found for user with ID: ${userId}`);
@@ -59,6 +61,7 @@ export class CvService {
 
       return cvs;
     } catch (error) {
+      // Capturer et renvoyer une erreur si quelque chose se passe mal
       throw new Error(`Failed to fetch CVs for user with ID: ${userId}. ${error.message}`);
     }
   }
