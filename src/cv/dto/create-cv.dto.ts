@@ -27,7 +27,8 @@ export class CreateCvDto {
   @IsString()
   path?: string;
   
-  @JoinColumn()
+  /*@JoinColumn()
   @IsNotEmpty()
   user: User;
+  Taking the logged user so remove this*/
 }

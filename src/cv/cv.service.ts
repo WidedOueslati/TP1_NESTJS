@@ -5,6 +5,9 @@ import { Cv } from './entities/cv.entity';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { Skill } from '../skill/entities/skill.entity'; 
+import { User } from '@/user/entities/user.entity';
+
+
 import { RechercheCvDto } from './dto/recherche-cv.dto';
 import { UserService } from '@/user/user.service';
 /*import { User } from '../user/entities/user.entity';
@@ -20,18 +23,27 @@ export class CvService {
     private skillRepository: Repository<Skill>,
   ) {}
 
-  async create(createCvDto: CreateCvDto): Promise<Cv> {
-    const newCv = this.cvRepository.create(createCvDto);
+  async create(createCvDto: CreateCvDto,user: User): Promise<Cv> {
+    const newCv = this.cvRepository.create({
+      ...createCvDto,
+      user: user // Ensure this is the connected user entity
+    });
     return await this.cvRepository.save(newCv);
   }
 
-  async findAll(): Promise<Cv[]> {
-    return await this.cvRepository.find();
+  async findAll(connectedUser: User): Promise<Cv[]> {
+    if (connectedUser.role === 'admin') {
+      // admin return all 
+      return this.cvRepository.find();
+    } else {
+      // normal user return only his cvs
+      return this.cvRepository.find({ where: { user: connectedUser }});
+    }
   }
   
-  async RechercheCv(rechercheCvDto: RechercheCvDto): Promise<Cv[]> {
+  async RechercheCv(rechercheCvDto: RechercheCvDto ,connectedUser: User): Promise<Cv[]> {
     const {criteria,age}=rechercheCvDto;
-        let cvs = await this.findAll();
+        let cvs = await this.findAll(connectedUser); 
         if (age){
             cvs=cvs.filter(cv=>cv.age==age);
         }

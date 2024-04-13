@@ -9,7 +9,8 @@ import { Repository } from 'typeorm';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from '@/common/file-upload.service';
 import { multerConfig } from '@/common/multer.config';
-
+import { User } from '@/user/decorators/user.decorators';
+import { User as UserEntity } from '@/user/entities/user.entity';
 @Controller({path: 'cv',
 version: '1',}
 )
@@ -19,16 +20,16 @@ export class CvController {
     ) {}
 
   @Post()
-  create(@Body() createCvDto: CreateCvDto) {
-    return this.cvService.create(createCvDto);
+  create(@Body() createCvDto: CreateCvDto,@User() connectedUser: UserEntity) {
+    return this.cvService.create(createCvDto,connectedUser);
   }
 
   @Get()
-  findAll(@Query() dto: RechercheCvDto) {
+  findAll(@Query() dto: RechercheCvDto,@User() connectedUser: UserEntity) {
     if (dto.criteria || dto.age) {
-      return this.cvService.RechercheCv(dto);
+      return this.cvService.RechercheCv(dto,connectedUser);
     } else {
-      return this.cvService.findAll();
+      return this.cvService.findAll(connectedUser);
     }
   }
   @Get('pag')
