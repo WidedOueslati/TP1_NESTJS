@@ -10,10 +10,10 @@ export class Cv {
   @Column({ length: 100 })
   name: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100,nullable:true })
   firstname: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, })
   age: number;
 
   @Column({ length: 20, nullable: true })

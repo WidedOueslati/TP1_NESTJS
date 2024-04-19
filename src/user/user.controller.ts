@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JWTAuthGuard } from '@/auth/guards/authenticated.guard';
-import { AdminGuard } from '@/auth/guards/admin.guards';
+import { JWTAuthGuard } from '../auth/guards/authenticated.guard';
+import { AdminGuard } from '../auth/guards/admin.guards';
 
 @Controller('user')
 export class UserController {

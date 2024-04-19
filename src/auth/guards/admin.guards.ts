@@ -25,13 +25,13 @@ import { FindRelationsNotFoundError } from 'typeorm';
         const payload = await this.jwtService.verifyAsync(token, {
           secret: process.env.SECRET,
         });
+        
         request['user'] = payload;
         console.log(request.user);
-        const user= await this.userService.findOne(request.user.userId);
-        console.log(user);
-        if ( user.role === 'admin') return true;
-        else throw new UnauthorizedException();
-      } catch {
+        
+        if ( request.user.role === 'admin') return true;
+        else {throw new UnauthorizedException();}
+      } catch { 
         throw new UnauthorizedException();
       }
       return true;

@@ -1,3 +1,4 @@
+import { UserService } from '../../user/user.service';
 import { RequestService } from '../../request.service';
 import {
   CanActivate,
@@ -7,10 +8,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { User } from '@ngneat/falso';
 
 @Injectable()
 export class JWTAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private requestService: RequestService) {}
+  constructor( private userService: UserService,
+    private jwtService: JwtService, private requestService: RequestService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -22,7 +25,10 @@ export class JWTAuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.SECRET,
       });
-      RequestService.setUserId(payload.userId); 
+      const user=  await this.userService.findOneByUsername(payload.username);
+      console.log(payload)
+      RequestService.setUserId(String(user.id)); 
+     
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

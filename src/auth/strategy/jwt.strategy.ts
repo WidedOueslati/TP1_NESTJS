@@ -2,7 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { PayloadDto } from '../dto/payload.dto';
 
@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.SECRET,
+      secretOrKey: `${process.env.JWT_SECRET_KEY}`,
     });
   }
   // La payloadInterface sert à typer votre code à vous de la créer selon votre payload

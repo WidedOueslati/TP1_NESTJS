@@ -6,7 +6,7 @@ import { RegisterUserDto } from './dto/register-user.dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
-
+require("dotenv").config();
 @Injectable()
 export class AuthService {
   constructor(
@@ -49,7 +49,8 @@ export class AuthService {
       role: user.role,
     };
 
-    const accessToken = this.jwtService.sign(payload);
+      
+      const accessToken = this.jwtService.sign(payload);
 
     return {
       'access-token': accessToken,

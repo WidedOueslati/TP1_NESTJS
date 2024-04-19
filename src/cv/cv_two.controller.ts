@@ -15,6 +15,7 @@ import { RechercheCvDto } from './dto/recherche-cv.dto';
 import { AdminGuard } from '../auth/guards/admin.guards';
 import { Cv } from './entities/cv.entity';
 import { UserDecorator } from '../auth/decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @Controller({
@@ -130,10 +131,8 @@ export class CvTwoController {
   @Get('profile')
   @UseGuards(JWTAuthGuard)
   getProfile(@UserDecorator() user: any) {
-    // Utiliser l'utilisateur récupéré
-    const userId = user.userId; 
-    //return this.userService.findOne(userId);
-    const userr = this.userService.findOne(userId);
+
+    const userr = this.userService.findOneByUsername(user.username);
     return userr;
   }
 }
