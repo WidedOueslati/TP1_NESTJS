@@ -105,7 +105,7 @@ export class CvTwoController {
   
   @Post('upload')
   @UseGuards(JWTAuthGuard)
-  @UseInterceptors(FileInterceptor('file', multerConfig)) // Assurez-vous que multerConfig est correctement défini
+  @UseInterceptors(FileInterceptor('file', multerConfig))
   async uploadFile(
     @UploadedFile(
       new ParseFilePipeBuilder()
