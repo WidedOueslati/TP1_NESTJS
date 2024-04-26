@@ -13,9 +13,11 @@ import { RequestService } from './request.service';
 import { AuthMiddleware } from './middlewares/authentification.middleware';
 import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
-  imports: [
+  imports: [ 
     AuthModule,
     CvModule,
     SkillModule,

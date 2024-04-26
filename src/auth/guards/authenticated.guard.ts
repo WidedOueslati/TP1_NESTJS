@@ -28,7 +28,7 @@ export class JWTAuthGuard implements CanActivate {
       const user=  await this.userService.findOneByUsername(payload.username);
       console.log(payload)
       RequestService.setUserId(String(user.id)); 
-     
+  
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

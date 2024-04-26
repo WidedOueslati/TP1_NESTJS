@@ -1,6 +1,7 @@
 import { Cv } from '../../cv/entities/cv.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Timestamp } from "../../common/database/timestamp.entity";
 
   export enum UserRole {
     ADMIN = 'admin',
@@ -8,7 +9,7 @@ import * as bcrypt from 'bcrypt';
   }
 
 @Entity()
-export class User {
+export class User  {
   @PrimaryGeneratedColumn()
   id: number;
 

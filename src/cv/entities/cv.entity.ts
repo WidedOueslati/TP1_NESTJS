@@ -1,9 +1,10 @@
 import { User } from '../../user/entities/user.entity';
 import { Skill } from '../../skill/entities/skill.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
+import { Timestamp } from "../../common/database/timestamp.entity";
 
 @Entity()
-export class Cv {
+export class Cv extends Timestamp {
   @PrimaryGeneratedColumn()
   id: number;
 

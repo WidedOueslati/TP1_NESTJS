@@ -52,7 +52,6 @@ export class CvTwoController {
   async findOne() {
     console.log(RequestService.getUserId());
     const userId = RequestService.getUserId(); 
-    console.log(userId);
     const user = await this.userService.findOne(+(RequestService.getUserId()));
     console.log(user);
     return this.cvService.findCvsByUserId(user.id);
@@ -97,7 +96,6 @@ export class CvTwoController {
     if ((!userId) || (cv.user.id !== +userId)){
       throw new UnauthorizedException('You are not authorized to delete this CV');
     }
-    console.log("heeeerrreeee 3");
     return this.cvService.remove(+id);
   }
 
