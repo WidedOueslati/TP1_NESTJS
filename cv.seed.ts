@@ -15,8 +15,10 @@ async function seedCVs() {
     const cvService = app.get(CvService);
     const skillService = app.get(SkillService);
 
+    // Fetching all users
     const allUsers = await userService.findAll();
-
+    
+    // Generating CVs for each user, each user has at least on CV
     for (const user of allUsers) {
       const cvCount = randNumber({ min: 1, max: 3 });
 
@@ -31,7 +33,7 @@ async function seedCVs() {
         cvDto.path = '/path/to/cv.pdf';
 
         const createdCv = await cvService.create(cvDto);
-
+        // assign random skills to a CV
         const skills = await skillService.findAll();
         const skillCount = randNumber({ min: 1, max: 5 });
 
@@ -43,8 +45,6 @@ async function seedCVs() {
         }
 
         for (const selectedSkill of selectedSkills) {
-          console.log("cv before sendskill",createdCv);
-          console.log("dto before sendskill",cvDto);
           await cvService.addSkillToCv(createdCv, selectedSkill.id);
         }
       }
