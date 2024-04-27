@@ -12,10 +12,12 @@ async function seedSkills() {
     const skillCount = 10;
     const skills: Skill[] = [];
 
+    // Generating random words for skill designation
     for (let i = 0; i < skillCount; i++) {
       const designation = randWord();
+      // Checking if the skill already exists
       const foundSkill = skills.find(skill => skill.Designation === designation);
-
+      // If the skill doesn't exist, create and add it to the list 
       if (!foundSkill){
         skills
       }
