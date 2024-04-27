@@ -9,7 +9,7 @@ async function seedUsers() {
   try {
     const userService = app.get(UserService);
     const numUsers = 5;
-
+    //generate users with random credentials
     for (let i = 0; i < numUsers; i++) {
       const user = {
         username: randUserName(),
