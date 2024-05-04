@@ -17,7 +17,7 @@ import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
-  imports: [ 
+  imports: [
     AuthModule,
     CvModule,
     SkillModule,
@@ -25,6 +25,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
+   
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -40,7 +41,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
           username: configService.get('DB_USERNAME'),
           password: configService.get('PASSWORD'),
           database: configService.get('DATABASE'),
-          entities: [User,Skill,Cv],
+          entities: [User, Skill, Cv],
           synchronize: true,
         };
       },
@@ -48,9 +49,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService,RequestService,JwtService],
+  providers: [AppService, RequestService, JwtService],
 })
-export class AppModule  implements NestModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware) // Apply the AuthMiddleware to specific routes

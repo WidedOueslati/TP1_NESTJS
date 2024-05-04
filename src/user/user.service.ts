@@ -8,8 +8,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  async findOneByEmail(email: string) : Promise <User>{
-    const user = await this.userRepository.findOne({ where: {email: email} });
+  async findOneByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email: email } });
     /*if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }*/
@@ -18,7 +18,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     console.log(createUserDto)
@@ -38,7 +38,7 @@ export class UserService {
     return user;
   }
   async findOneByUsername(username: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: {username: username} });
+    const user = await this.userRepository.findOne({ where: { username: username } });
     /*if (!user) {
       throw new NotFoundException(`User with username ${username} not found`);
     }*/

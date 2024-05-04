@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException, NotFoundException, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException, NotFoundException, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus, UseGuards, Query, Res } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { UserService } from '../user/user.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -16,6 +16,7 @@ import { AdminGuard } from '../auth/guards/admin.guards';
 import { Cv } from './entities/cv.entity';
 import { UserDecorator } from '../auth/decorator';
 import { AuthGuard } from '@nestjs/passport';
+import * as fs from 'fs';
 
 
 @Controller({
@@ -50,10 +51,8 @@ export class CvTwoController {
   @Get()
   @UseGuards(JWTAuthGuard)
   async findOne() {
-    console.log(RequestService.getUserId());
     const userId = RequestService.getUserId(); 
     const user = await this.userService.findOne(+(RequestService.getUserId()));
-    console.log(user);
     return this.cvService.findCvsByUserId(user.id);
   }
 
@@ -99,6 +98,16 @@ export class CvTwoController {
     return this.cvService.remove(+id);
   }
 
+  @Get('upload/:name')
+  getFile(@Param('name') name: string,  @Res() res )
+  {
+   const file = fs.readFileSync(`public/uploads/${name}`);
+   
+   res.set({'Content-Type': 'image/jpeg'});
+    res.send(file);
+   return file;
+
+  }
 
   
   @Post('upload')
@@ -113,7 +122,7 @@ export class CvTwoController {
     )
     file: Express.Multer.File,
   ) {
-    console.log("test1 ", file);
+    console.log("file: ", file);
     const user = await this.userService.findOne(+(RequestService.getUserId()));
     console.log(user);
     const cvs= await this.cvService.findCvsByUserId(+(RequestService.getUserId()));

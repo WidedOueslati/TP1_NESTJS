@@ -26,7 +26,6 @@ export class JWTAuthGuard implements CanActivate {
         secret: process.env.SECRET,
       });
       const user=  await this.userService.findOneByUsername(payload.username);
-      console.log(payload)
       RequestService.setUserId(String(user.id)); 
   
       request['user'] = payload;

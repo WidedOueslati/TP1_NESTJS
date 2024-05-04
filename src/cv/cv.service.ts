@@ -4,10 +4,10 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { Cv } from './entities/cv.entity';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
-import { Skill } from '../skill/entities/skill.entity'; 
+import { Skill } from '../skill/entities/skill.entity';
 import { RechercheCvDto } from './dto/recherche-cv.dto';
 import { UserService } from '../user/user.service';
-import { CrudService } from '@/common/service/crud.service';
+import { CrudService } from '../common/service/crud.service';
 /*import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';*/
 
@@ -19,25 +19,24 @@ export class CvService extends CrudService<Cv> {
     private readonly userService: UserService,
     @InjectRepository(Skill)
     private skillRepository: Repository<Skill>,
-  ) {super(cvRepository)}
+  ) { super(cvRepository) }
 
   async RechercheCv(rechercheCvDto: RechercheCvDto): Promise<Cv[]> {
-    const {criteria,age}=rechercheCvDto;
-        let cvs = await this.findAll();
-        if (age){
-            cvs=cvs.filter(cv=>cv.age==age);
-        }
-        if (criteria){
-            cvs=cvs.filter(cv=> cv.name.includes(criteria)||cv.firstname.includes(criteria)||cv.Job.includes(criteria));
-        }
-        return cvs;
+    const { criteria, age } = rechercheCvDto;
+    let cvs = await this.findAll();
+    if (age) {
+      cvs = cvs.filter(cv => cv.age == age);
+    }
+    if (criteria) {
+      cvs = cvs.filter(cv => cv.name.includes(criteria) || cv.firstname.includes(criteria) || cv.Job.includes(criteria));
+    }
+    return cvs;
   }
 
   async findCvsByUserId(userId: number): Promise<Cv[]> {
-    try {
-      
+    
+
       const userr = await this.userService.findOne(userId);
-      console.log(userr)
       if (!userr) {
         throw new NotFoundException(`User with ID ${userId} not found`);
       }
@@ -47,16 +46,12 @@ export class CvService extends CrudService<Cv> {
       });
 
       if (!cvs || cvs.length === 0) {
-    
         throw new NotFoundException(`CVs not found for user with ID: ${userId}`);
 
       }
 
       return cvs;
-    } catch (error) {
-      
-      throw new Error(`Failed to fetch CVs for user with ID: ${userId}. ${error.message}`);
-    }
+    
   }
 
   async addSkillToCv(cv: Cv, skillId: number): Promise<void> {
@@ -81,14 +76,14 @@ export class CvService extends CrudService<Cv> {
       await this.cvRepository.save(cv);
     }
   }
-  async uploadImage(file: Express.Multer.File, cvId:number): Promise<Cv> {     
-     const cv = await this.findOne(cvId);
-     if (!cv) {
-       throw new NotFoundException(`CV with ID ${cvId} not found`);
-     }
-     console.log(file);
-     cv.path = String(file); 
-     return await this.cvRepository.save(cv);
+  async uploadImage(file: Express.Multer.File, cvId: number): Promise<Cv> {
+    const cv = await this.findOne(cvId);
+    if (!cv) {
+      throw new NotFoundException(`CV with ID ${cvId} not found`);
+    }
+    console.log(file);
+    cv.path = String(file);
+    return await this.cvRepository.save(cv);
   }
 
   async findAllPag(page: number = 1, pageSize: number = 10): Promise<[Cv[], number]> {

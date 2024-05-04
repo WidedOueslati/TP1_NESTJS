@@ -30,7 +30,7 @@ import { FindRelationsNotFoundError } from 'typeorm';
         console.log(request.user);
         
         if ( request.user.role === 'admin') return true;
-        else {throw new UnauthorizedException();}
+        else {throw new UnauthorizedException("you have to be an admin");}
       } catch { 
         throw new UnauthorizedException();
       }
