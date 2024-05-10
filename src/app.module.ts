@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       },
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService, RequestService, JwtService],
