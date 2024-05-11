@@ -1,4 +1,5 @@
 import { Cv } from '../../cv/entities/cv.entity';
+import { CvHistory } from '../../cv/entities/cv_history.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Timestamp } from "../../common/database/timestamp.entity";
@@ -35,6 +36,9 @@ export class User  {
 
   @OneToMany(() => Cv, (cv) => cv.user)
   cvs: Cv[];
+  
+  @OneToMany(() => CvHistory, (cvHistories) => cvHistories.user)
+  cvHistories: CvHistory[];
 
   @BeforeInsert()
   async hashPassword() {

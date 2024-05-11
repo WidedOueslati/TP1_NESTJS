@@ -24,7 +24,7 @@ import {
     @Column()
     cvId: number;
   
-    @ManyToOne(() => Cv, (cv) => cv.cvHistories,, {
+    @ManyToOne(() => Cv, (cv) => cv.cvHistories, {
         eager: true,
       })
     @JoinColumn({ name: 'cvId' }) // Define the foreign key column name
