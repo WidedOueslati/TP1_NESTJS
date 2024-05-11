@@ -5,15 +5,12 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class CrudService<Entity extends HasId> {
-  constructor(private repository: Repository<Entity>,private eventEmitter: EventEmitter2,) {}
+  constructor(private repository: Repository<Entity>) {}
 
   
   async create(entity: DeepPartial<Entity>): Promise<Entity> {
     try {
       const savedEntity = await this.repository.save(entity);
-      this.eventEmitter.emit('entity.created', {
-        entity: savedEntity,
-      });
       return savedEntity;
     } catch (error) {
       // Handle errors appropriately
@@ -32,9 +29,6 @@ export class CrudService<Entity extends HasId> {
 
     try {
       const updatedEntity = await this.repository.save(entity);
-      this.eventEmitter.emit('entity.updated', {
-        entity: updatedEntity,
-      });
       return updatedEntity;
     } catch (error) {
       // Handle errors appropriately
@@ -47,7 +41,6 @@ export class CrudService<Entity extends HasId> {
     if (!result.affected) {
       throw new NotFoundException('Entity not found');
     }
-    this.eventEmitter.emit('entity.deleted', { id });
     return result;
   }
 
@@ -56,7 +49,6 @@ export class CrudService<Entity extends HasId> {
     if (!result.affected) {
       throw new NotFoundException('Entity not found');
     }
-    this.eventEmitter.emit('entity.restored', { id });
     return result;
   }
 

@@ -2,6 +2,7 @@ import { Cv } from '../../cv/entities/cv.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Timestamp } from "../../common/database/timestamp.entity";
+import { CvHistory } from '@/cv/entities/cv_history.entity';
 
   export enum UserRole {
     ADMIN = 'admin',
@@ -10,6 +11,7 @@ import { Timestamp } from "../../common/database/timestamp.entity";
 
 @Entity()
 export class User  {
+  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,6 +37,9 @@ export class User  {
 
   @OneToMany(() => Cv, (cv) => cv.user)
   cvs: Cv[];
+
+  @OneToMany(() => CvHistory, (cvHistory) => cvHistory.user, { eager: true })
+  cvHistories: CvHistory[];
 
   @BeforeInsert()
   async hashPassword() {

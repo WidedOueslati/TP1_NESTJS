@@ -16,6 +16,7 @@ import { JwtService } from '@nestjs/jwt';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { CvHistory } from './cv/entities/cv_history.entity';
 
 @Module({
   imports: [
@@ -42,7 +43,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           username: configService.get('DB_USERNAME'),
           password: configService.get('PASSWORD'),
           database: configService.get('DATABASE'),
-          entities: [User, Skill, Cv],
+          entities: [User, Skill, Cv, CvHistory],
           synchronize: true,
         };
       },

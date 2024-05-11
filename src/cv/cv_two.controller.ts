@@ -1,13 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException, NotFoundException, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus, UseGuards, Query, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException, NotFoundException, UseInterceptors, UploadedFile, ParseFilePipeBuilder, HttpStatus, UseGuards, Query, Res, Sse } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { UserService } from '../user/user.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { RequestService } from '../request.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { v4 as uuidv4 } from 'uuid';
 import { multerConfig } from '../common/multer.config';
 import { FileUploadService } from '../common/file-upload.service';
 import { JWTAuthGuard } from '../auth/guards/authenticated.guard';
@@ -17,6 +14,10 @@ import { Cv } from './entities/cv.entity';
 import { UserDecorator } from '../auth/decorator';
 import { AuthGuard } from '@nestjs/passport';
 import * as fs from 'fs';
+import { Observable, filter, fromEvent, map } from 'rxjs';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { APP_EVENTS } from '@/config/events.config';
+import { User, UserRole } from '@/user/entities/user.entity';
 
 
 @Controller({
@@ -29,6 +30,7 @@ export class CvTwoController {
     private readonly cvService: CvService,
     private readonly userService: UserService,
     private readonly fileUploadService: FileUploadService,
+    private eventEmitter: EventEmitter2
   ) {}
 
   @Get('all')
@@ -65,7 +67,13 @@ export class CvTwoController {
     }
     createCvDto.user= user; // Add userId to the DTO
     console.log(createCvDto);
-    return this.cvService.create(createCvDto);
+    const cv = await this.cvService.create(createCvDto);
+    this.eventEmitter.emit(APP_EVENTS.Cv.add, {
+      type:"add",
+      cv,
+      user
+    });
+    return cv;
   }
 
   @Patch(':id')
@@ -79,11 +87,17 @@ export class CvTwoController {
     if (!cv) {
       throw new NotFoundException('CV not found');
     }
-
+    const user = cv.user;
     if (cv.user.id !== +userId) {
       throw new UnauthorizedException('You are not authorized to update this CV');
     }
-    return this.cvService.update(+id, updateCvDto);
+    const cvUpdated= await this.cvService.update(+id, updateCvDto);
+    this.eventEmitter.emit(APP_EVENTS.Cv.update, {
+      type:"update",
+      cv,
+      user,
+    });
+    return cvUpdated;
   }
 
   @Delete(':id')
@@ -92,10 +106,22 @@ export class CvTwoController {
     console.log('removing');
     const userId = RequestService.getUserId(); 
     const cv = await this.cvService.findOne(id);
+    const user= cv.user;
     if ((!userId) || (cv.user.id !== +userId)){
       throw new UnauthorizedException('You are not authorized to delete this CV');
     }
-    return this.cvService.remove(+id);
+    const cvId=id;
+    const del= await this.cvService.remove(+id);
+    this.eventEmitter.emit(APP_EVENTS.Cv.delete, {
+      del,
+      type:"delete",
+      user,
+      cvId,
+      
+
+    });
+    return del;
+
   }
 
   @Get('upload/:name')
@@ -142,4 +168,56 @@ export class CvTwoController {
     const userr = this.userService.findOneByUsername(user.username);
     return userr;
   }
+
+  @UseGuards(JWTAuthGuard)
+  @Sse('sse/add')
+  sseAdd(@UserDecorator() user :User): Observable<MessageEvent> {
+    return fromEvent(this.eventEmitter, APP_EVENTS.Cv.add).pipe(
+      filter((payload:any) => {
+        return (
+         user.role === UserRole.ADMIN 
+         || user.username === payload.user.username
+        );
+      }),
+      map((payload) => {
+        console.log({ payload });
+        return new MessageEvent('new cv', { data: payload });
+      }),
+    );
+  }
+  @UseGuards(JWTAuthGuard)
+    @Sse('sse/update')
+    sseUpdate(@UserDecorator() user :User): Observable<MessageEvent> {
+      return fromEvent(this.eventEmitter, APP_EVENTS.Cv.update).pipe(
+        filter((payload:any) => {
+          return (
+           user.role === UserRole.ADMIN 
+           || user.username === payload.user.username
+          );
+        }),
+        map((payload) => {
+          console.log({ payload });
+          return new MessageEvent('cv updated', { data: payload });
+        }),
+      );
+
+}
+@UseGuards(JWTAuthGuard)
+@Sse('sse/delete')
+sseDlete(@UserDecorator() user :User): Observable<MessageEvent> {
+  return fromEvent(this.eventEmitter, APP_EVENTS.Cv.delete).pipe(
+    filter((payload:any) => {
+      console.log(payload.user)
+      console.log(user)
+      return (
+       user.role === UserRole.ADMIN 
+       || user.username === payload.user.username
+      );
+    }),
+    map((payload) => {
+      console.log({ payload });
+      return new MessageEvent('deleted cv', { data: payload });
+    }),
+  );
+}
 }
