@@ -8,6 +8,7 @@ import { Skill } from '../skill/entities/skill.entity';
 import { RechercheCvDto } from './dto/recherche-cv.dto';
 import { UserService } from '../user/user.service';
 import { CrudService } from '../common/service/crud.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 /*import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';*/
 
@@ -16,10 +17,11 @@ export class CvService extends CrudService<Cv> {
   constructor(
     @InjectRepository(Cv)
     private cvRepository: Repository<Cv>,
+    private CVeventEmitter: EventEmitter2,
     private readonly userService: UserService,
     @InjectRepository(Skill)
     private skillRepository: Repository<Skill>,
-  ) { super(cvRepository) }
+  ) { super(cvRepository,CVeventEmitter) }
 
   async RechercheCv(rechercheCvDto: RechercheCvDto): Promise<Cv[]> {
     const { criteria, age } = rechercheCvDto;

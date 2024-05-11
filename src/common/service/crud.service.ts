@@ -5,7 +5,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class CrudService<Entity extends HasId> {
-  constructor(private repository: Repository<Entity>,private eventEmitter: EventEmitter2,) {}
+  constructor(private repository: Repository<Entity>,private eventEmitter: EventEmitter2) {}
 
   
   async create(entity: DeepPartial<Entity>): Promise<Entity> {
