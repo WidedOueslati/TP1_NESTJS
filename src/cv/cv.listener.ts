@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { EventEnum } from './enum/event.enum';
+import { EventEnum } from '../common/enum/event.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CvHistory } from './entities/cv_history.entity';
 import { Repository } from 'typeorm';
